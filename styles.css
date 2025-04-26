@@ -1,0 +1,481 @@
+:root {
+    --primary-blue: #2a4aa1;
+    --secondary-blue: #193584;
+    --light-blue: #eef1fa;
+    --dark-text: #333;
+    --light-text: #666;
+    --white: #ffffff;
+    --border-color: #e5e7eb;
+    --background-light: #f9fafb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--dark-text);
+    line-height: 1.5;
+    background-color: var(--background-light);
+    min-height: 100vh;
+    padding: 0.5rem 0; /* Reduced top padding from 2rem to 0.5rem */
+}
+
+.mountain-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%232a4aa1' fill-opacity='0.1' d='M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,181.3C960,181,1056,203,1152,208C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3Cpath fill='%232a4aa1' fill-opacity='0.2' d='M0,288L60,272C120,256,240,224,360,224C480,224,600,256,720,261.3C840,267,960,245,1080,218.7C1200,192,1320,160,1380,144L1440,128L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: cover;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    z-index: -1;
+    opacity: 0.7;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 1rem; /* Reduced from 2rem */
+    padding: 0.75rem; /* Reduced from 1rem */
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+header h1 {
+    color: var(--primary-blue);
+    margin-bottom: 0.25rem; /* Reduced from 0.5rem */
+    font-size: 1.8rem; /* Added smaller font size */
+}
+
+header p {
+    color: var(--light-text);
+    font-size: 0.9rem; /* Added smaller font size */
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+    main {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Form container styles */
+.form-container {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.form-container h2 {
+    margin-bottom: 1.5rem;
+    color: var(--primary-blue);
+    border-bottom: 2px solid var(--primary-blue);
+    padding-bottom: 0.5rem;
+}
+
+.form-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--background-light);
+    border-radius: 8px;
+}
+
+.form-section h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-blue);
+    font-size: 1.1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--light-text);
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+button {
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    border: none;
+    font-family: inherit;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.primary-btn {
+    background-color: var(--primary-blue);
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: var(--secondary-blue);
+}
+
+.secondary-btn {
+    background-color: var(--primary-blue);
+    color: white;
+}
+
+.secondary-btn:hover {
+    background-color: var(--secondary-blue);
+}
+
+.secondary-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#addItemBtn {
+    background-color: #f3f4f6;
+    color: var(--text-color);
+    border: 1px dashed var(--border-color);
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+#addItemBtn:hover {
+    background-color: #e5e7eb;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.item-row {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1.5fr 1.5fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-items: end;
+}
+
+.item-total {
+    text-align: right;
+}
+
+.lineTotal {
+    display: inline-block;
+    padding: 0.75rem;
+    background-color: #f3f4f6;
+    border-radius: 5px;
+    width: 100%;
+    text-align: right;
+}
+
+/* Invoice Preview Styles - Optimized Design */
+.invoice-preview {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.invoice {
+    background-color: white;
+    width: 100%;
+    max-width: 800px;
+    min-height: 1123px; /* A4 height in pixels */
+    max-height: 1123px;
+    padding: 10px; /* Reduced from 15px */
+    padding-top: 5px; /* Even less padding at the top */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* New Optimized Invoice Design */
+.blueside-invoice {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Header optimization - significantly reduced height */
+.blueside-header {
+    position: relative;
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 6px 20px; /* Dramatically reduced padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    overflow: hidden;
+    min-height: 90px; /* Slightly increased to fit larger logo */
+}
+
+/* Logo size optimization - significantly increased */
+.company-logo {
+    max-width: 240px; /* Increased from 180px */
+    height: auto;
+    display: block;
+    margin-bottom: 0;
+}
+
+.blueside-header-left h1 {
+    font-size: 1.8rem;
+    margin-top: 0;
+}
+
+.blueside-header-right {
+    text-align: right;
+    font-size: 0.9rem;
+}
+
+.blueside-header-right .total-amount {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+}
+
+.invoice-from {
+    background-color: var(--white);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+    max-width: 280px;
+}
+
+/* Body optimization for better spacing */
+.blueside-body {
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Signature section optimization */
+.signature-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 5px;
+    gap: 10px;
+}
+
+.signature-image {
+    max-width: 80px; /* Smaller signature */
+    height: auto;
+}
+
+.invoice-table-container {
+    margin: 0; /* Remove margins to eliminate gaps */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.invoice-table thead {
+    background-color: #f8f8f8;
+}
+
+.invoice-table th {
+    padding: 0.5rem 0.75rem; /* Smaller padding */
+    text-align: left;
+    font-weight: 500;
+    color: var(--light-text);
+    border-bottom: none;
+}
+
+.invoice-table tbody {
+    background-color: #212121;
+    color: white;
+}
+
+.invoice-table td {
+    padding: 0.5rem 0.75rem; /* Smaller padding */
+    border-bottom: none;
+}
+
+.invoice-table .amount {
+    text-align: right;
+}
+
+.invoice-summary {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 250px;
+    background-color: var(--light-blue);
+    padding: 0.75rem 1rem; /* Less padding */
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    font-size: 0.85rem; /* Smaller font */
+}
+
+.summary-row.total {
+    font-weight: bold;
+    font-size: 1rem; /* Smaller total font */
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.invoice-footer {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    gap: 10px;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-section h4 {
+    background-color: var(--primary-blue);
+    color: white;
+    display: inline-block;
+    padding: 0.3rem 0.75rem; /* Smaller padding */
+    border-radius: 20px;
+    font-size: 0.75rem; /* Smaller font */
+    margin-bottom: 1rem;
+}
+
+.footer-section p {
+    font-size: 0.8rem; /* Smaller text */
+    color: var(--light-text);
+    line-height: 1.3;
+}
+
+.terms-section {
+    margin: 5px 0;
+    padding: 5px 0;
+    border-top: 1px solid #eee;
+}
+
+.bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px solid #eee;
+}
+
+/* Hidden initially */
+#invoice {
+    display: none;
+}
+
+/* Enhanced responsiveness */
+@media (max-width: 1024px) {
+    main {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .form-container, .invoice-preview {
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    
+    .invoice-preview {
+        margin-top: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    body {
+        padding: 1rem 0;
+    }
+    
+    .container {
+        padding: 0 1rem;
+    }
+    
+    header {
+        padding: 1rem 0.5rem;
+    }
+    
+    .form-container {
+        padding: 1.25rem;
+    }
+    
+    .form-section {
+        padding: 0.75rem;
+    }
+    
+    input, textarea, select {
+        padding: 0.6rem;
+        font-size: 0.95rem;
+    }
+    
+    .item-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .form-group {
+        width: 100%;
+    }
+}

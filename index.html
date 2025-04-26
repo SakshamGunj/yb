@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yaara Services - Invoice Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Additional responsive styles */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .form-section {
+                padding: 15px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .button-group button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .item-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .form-container, .invoice-preview {
+                max-height: none;
+                height: auto;
+            }
+        }
+        
+        /* Form enhancement styles */
+        .form-container {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            background: #ffffff;
+            padding: 1.5rem;
+            position: relative;
+            max-height: 80vh; /* Restore scrollable behavior */
+            overflow-y: auto;
+        }
+        
+        .form-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #2a4aa1;
+        }
+        
+        .form-container h2 {
+            color: #2a4aa1;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.75rem;
+        }
+        
+        .form-section {
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+        
+        .form-section h3 {
+            font-size: 1rem;
+            color: #2a4aa1;
+            padding: 0.75rem 1rem;
+            margin: 0;
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        /* Enhanced form fields */
+        input, textarea, select {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            width: 100%;
+            color: #374151;
+            background-color: #fcfcfc;
+        }
+        
+        input:hover, textarea:hover, select:hover {
+            border-color: #cbd5e1;
+            background-color: #fff;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #3b63c5;
+            box-shadow: 0 0 0 2px rgba(59, 99, 197, 0.2);
+            outline: none;
+            background-color: #fff;
+        }
+        
+        textarea {
+            min-height: 80px;
+        }
+        
+        label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-section .form-group:last-child {
+            margin-bottom: 1rem;
+        }
+        
+        /* Fix form row layout */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        /* Improve item rows */
+        .item-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1.5fr 1.5fr;
+            gap: 0.75rem;
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .lineTotal {
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 0.6rem;
+            display: inline-block;
+            text-align: right;
+        }
+        
+        .invoice-preview {
+            background: #f3f4f6;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Fix scrolling issues on mobile */
+        @media (max-width: 1024px) {
+            .form-container, .invoice-preview {
+                max-height: 65vh;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mountain-bg"></div>
+    
+    <div class="container">
+        <header>
+            <h1>Invoice Generator</h1>
+            <p>Create professional invoices for your travel and adventure business</p>
+        </header>
+
+        <main>
+            <div class="form-container">
+                <h2>Enter Invoice Details</h2>
+                <form id="invoiceForm">
+                    <div class="form-section">
+                        <h3>Your Company Details</h3>
+                        <div class="form-group">
+                            <label for="companyName">Company Name</label>
+                            <input type="text" id="companyName" value="Yaara Services" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyAddress">Company Address</label>
+                            <textarea id="companyAddress" required>5th Mile Lumsey, Tadong beside Hotel Lumsey Inn.
+Sikkim, India - 737101</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyPhone">Phone Number</label>
+                            <input type="text" id="companyPhone" value="+91 98830 23091" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyGST">GSTIN</label>
+                            <input type="text" id="companyGST" value="22AAAAA0000A1Z5">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Client Information</h3>
+                        <div class="form-group">
+                            <label for="clientName">Client Name</label>
+                            <input type="text" id="clientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientAddress">Client Address</label>
+                            <textarea id="clientAddress" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientGST">Client GSTIN (Optional)</label>
+                            <input type="text" id="clientGST">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Invoice Details</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="invoiceNumber">Invoice Number</label>
+                                <input type="text" id="invoiceNumber" value="INV-001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="invoiceDate">Invoice Date</label>
+                                <input type="date" id="invoiceDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="advancePayment">Advance Payment (₹)</label>
+                            <input type="number" id="advancePayment" value="0" min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Items</h3>
+                        <div id="itemsList">
+                            <div class="item-row">
+                                <div class="form-group">
+                                    <label for="itemName1">Item Description</label>
+                                    <input type="text" id="itemName1" class="itemName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="itemQty1">Qty</label>
+                                    <input type="number" id="itemQty1" class="itemQty" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="itemPrice1">Unit Price (₹)</label>
+                                    <input type="number" id="itemPrice1" class="itemPrice" min="0" step="0.01" required>
+                                </div>
+                                <div class="form-group item-total">
+                                    <label>Amount (₹)</label>
+                                    <span class="lineTotal">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addItemBtn">+ Add Item</button>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Tax & Additional Information</h3>
+                        <div class="form-group">
+                            <label for="taxRate">GST Rate (%)</label>
+                            <input type="number" id="taxRate" value="18" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Notes / Terms</label>
+                            <textarea id="notes">Thank you for choosing Yaara Services! Payment is due within 15 days.</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="bankDetails">Bank Details</label>
+                            <textarea id="bankDetails">Bank: Mountain National Bank
+Account Name: Yaara Services
+Account Number: 1234567890
+IFSC Code: MNBC0001234
+Branch: Mountain View</textarea>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" id="generateInvoiceBtn" class="primary-btn">Generate Invoice</button>
+                        <button type="button" id="downloadPdfBtn" class="secondary-btn" disabled>Download PDF</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="invoicePreview" class="invoice-preview">
+                <div id="invoice" class="invoice">
+                    <!-- Invoice will be generated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
