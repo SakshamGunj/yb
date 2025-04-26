@@ -48,17 +48,21 @@ module.exports = async (req, res) => {
     // Generate HTML for PDF
     const html = generateInvoiceHTML(data);
     
-    // Configure browser with memory optimization - FIX: Call the function instead of accessing as property
-    const executablePath = await chrome.executablePath();
+    // Configure for AWS Lambda environment (Vercel uses this under the hood)
+    chrome.setHeadlessMode = true;
     
-    // Launch browser with memory-optimized settings
+    // Tell chromium we're running on Vercel/Lambda
+    const executablePath = await chrome.executablePath({
+      folderName: '/tmp/chromium'
+    });
+    
+    // Launch browser with memory-optimized settings for serverless
     const browser = await puppeteer.launch({
       args: [
         ...chrome.args,
         '--disable-dev-shm-usage',
         '--disable-gpu',
         '--single-process',
-        '--no-zygote',
         '--no-sandbox',
         '--disable-extensions',
         '--disable-audio-output',
@@ -70,7 +74,7 @@ module.exports = async (req, res) => {
         '--font-render-hinting=none'
       ],
       executablePath,
-      headless: chrome.headless,
+      headless: true,
       ignoreHTTPSErrors: true,
       dumpio: false
     });

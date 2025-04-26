@@ -4,10 +4,11 @@
   "description": "Invoice Generator with PDF export",
   "main": "index.js",
   "dependencies": {
-    "puppeteer-core": "^20.8.3",
-    "@sparticuz/chromium": "^113.0.1"
+    "puppeteer-core": "^19.7.0",
+    "@sparticuz/chromium": "^119.0.0",
+    "@sparticuz/chromium-min": "^119.0.0"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   }
 }
