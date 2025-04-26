@@ -48,8 +48,8 @@ module.exports = async (req, res) => {
     // Generate HTML for PDF
     const html = generateInvoiceHTML(data);
     
-    // Configure browser with memory optimization
-    const executablePath = await chrome.executablePath;
+    // Configure browser with memory optimization - FIX: Call the function instead of accessing as property
+    const executablePath = await chrome.executablePath();
     
     // Launch browser with memory-optimized settings
     const browser = await puppeteer.launch({
