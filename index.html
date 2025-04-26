@@ -242,6 +242,70 @@
                 overflow: visible;
             }
         }
+
+        /* Mobile PDF optimization */
+        .mobile-pdf-mode {
+            padding: 5px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        .mobile-pdf-mode .blueside-header {
+            padding: 10px !important;
+            min-height: auto !important;
+            flex-direction: column !important;
+        }
+        
+        .mobile-pdf-mode img {
+            max-width: 150px !important;
+            height: auto !important;
+        }
+        
+        .mobile-pdf-mode .blueside-body {
+            padding: 8px !important;
+        }
+        
+        /* Loading indicator */
+        .loading-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .loading-text::after {
+            content: '';
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+            100% { content: '.'; }
+        }
+        
+        @media (max-width: 768px) {
+            /* Add a special view for PDF preview on mobile */
+            .invoice-preview {
+                background-color: white;
+                padding: 10px 5px;
+                border: 1px solid #e5e7eb;
+                overflow-x: hidden !important;
+            }
+            
+            /* Make sure invoice doesn't overflow */
+            .invoice {
+                width: 100% !important;
+                overflow-x: hidden !important;
+                transform: scale(0.95);
+                transform-origin: top center;
+            }
+            
+            /* Ensure QR code doesn't break layout */
+            img[alt="UPI QR Code"] {
+                max-width: 120px !important;
+                height: auto !important;
+            }
+        }
     </style>
 </head>
 <body>

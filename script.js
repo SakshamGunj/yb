@@ -337,22 +337,90 @@ function renderInvoice(data) {
     console.log("Invoice rendered successfully");
 }
 
-// Download invoice as PDF
+// Download invoice as PDF - using Vercel API
 function downloadPdf() {
-    const element = document.getElementById('invoice');
-    const companyName = document.getElementById('companyName').value;
-    const invoiceNumber = document.getElementById('invoiceNumber').value;
-    const fileName = `${companyName}_Invoice_${invoiceNumber}.pdf`;
-    
-    // Configuration for PDF generation with margins
-    const opt = {
-        margin: [0, 5, 5, 5], // No top margin, 5mm for other sides
-        filename: fileName,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    
-    // Generate PDF
-    html2pdf().from(element).set(opt).save();
+    try {
+        console.log("Starting PDF download process");
+        const downloadBtn = document.getElementById('downloadPdfBtn');
+        const originalText = downloadBtn.textContent;
+        
+        // Show loading indicator
+        downloadBtn.innerHTML = "Generating PDF<span class='loading-text'></span>";
+        downloadBtn.disabled = true;
+        
+        // Collect all the invoice data
+        const invoiceData = {
+            company: {
+                name: document.getElementById('companyName').value,
+                address: document.getElementById('companyAddress').value,
+                phone: document.getElementById('companyPhone').value,
+                gst: document.getElementById('companyGST').value
+            },
+            client: {
+                name: document.getElementById('clientName').value,
+                address: document.getElementById('clientAddress').value,
+                gst: document.getElementById('clientGST').value
+            },
+            invoice: {
+                number: document.getElementById('invoiceNumber').value,
+                date: document.getElementById('invoiceDate').value,
+                advancePayment: parseFloat(document.getElementById('advancePayment').value) || 0,
+                taxRate: parseFloat(document.getElementById('taxRate').value) || 0,
+            },
+            items: getInvoiceItems(),
+            notes: document.getElementById('notes').value,
+            bankDetails: document.getElementById('bankDetails').value
+        };
+        
+        // Once deployed, use your Vercel URL here
+        fetch('/api/generate-pdf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(invoiceData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status} ${response.statusText}`);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Create a URL for the blob
+            const url = window.URL.createObjectURL(blob);
+            
+            // Create a temporary link to download the file
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `${invoiceData.company.name}_Invoice_${invoiceData.invoice.number}.pdf`;
+            
+            // Append to the document and trigger download
+            document.body.appendChild(a);
+            a.click();
+            
+            // Clean up
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            // Reset button state
+            downloadBtn.innerHTML = originalText;
+            downloadBtn.disabled = false;
+            
+            console.log("PDF downloaded successfully");
+        })
+        .catch(error => {
+            console.error("Error downloading PDF:", error);
+            alert(`Could not generate PDF: ${error.message}`);
+            downloadBtn.innerHTML = originalText;
+            downloadBtn.disabled = false;
+        });
+        
+    } catch (error) {
+        console.error("Error initiating PDF download:", error);
+        alert("An error occurred while preparing the PDF. Please try again.");
+        document.getElementById('downloadPdfBtn').innerHTML = "Download PDF";
+        document.getElementById('downloadPdfBtn').disabled = false;
+    }
 }
