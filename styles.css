@@ -479,3 +479,40 @@ button {
         width: 100%;
     }
 }
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    /* Adjust main layout */
+    main {
+        display: block;
+        padding: 0;
+    }
+    
+    /* Fix container sizing */
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+    
+    /* Better previewing */
+    .invoice-preview {
+        margin-top: 20px;
+        padding: 10px;
+    }
+    
+    /* Fix spacing */
+    .invoice {
+        padding: 5px;
+    }
+    
+    /* Make scrolling work better */
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Ensure input fields don't overflow */
+    input, select, textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
