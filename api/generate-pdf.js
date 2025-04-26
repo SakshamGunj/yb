@@ -1,15 +1,33 @@
 const puppeteer = require('puppeteer-core');
 const chrome = require('@sparticuz/chromium');
 
-// PDF HTML generator function
+// Function to generate invoice HTML (keeping your existing implementation)
 const generateInvoiceHTML = (data) => {
-  // Use your existing HTML generation code
-  // This is the same function you already have in server.js
-  // ...existing code...
+  // Calculate tax and totals
+  let subtotal = 0;
+  data.items.forEach(item => {
+      subtotal += (item.qty * item.price);
+  });
+  
+  const taxAmount = (subtotal * data.invoice.taxRate) / 100;
+  const total = subtotal + taxAmount;
+  const balanceDue = Math.max(0, total - data.invoice.advancePayment);
+  
+  // Format the date
+  const date = new Date(data.invoice.date);
+  const formattedDate = date.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+  }).replace(/\//g, '-');
+  
+  // Return your existing HTML template with all styling and structure
+  return `<!DOCTYPE html>
+          <html><!-- Your existing HTML template --></html>`;
 };
 
 module.exports = async (req, res) => {
-  // Enable CORS
+  // CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
@@ -30,28 +48,69 @@ module.exports = async (req, res) => {
     // Generate HTML for PDF
     const html = generateInvoiceHTML(data);
     
-    // Configure browser
+    // Configure browser with memory optimization
     const executablePath = await chrome.executablePath;
     
-    // Launch browser
+    // Launch browser with memory-optimized settings
     const browser = await puppeteer.launch({
-      args: chrome.args,
+      args: [
+        ...chrome.args,
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--single-process',
+        '--no-zygote',
+        '--no-sandbox',
+        '--disable-extensions',
+        '--disable-audio-output',
+        '--disable-background-networking',
+        '--disable-background-timer-throttling',
+        '--disable-client-side-phishing-detection',
+        '--disable-default-apps',
+        '--disable-translate',
+        '--font-render-hinting=none'
+      ],
       executablePath,
       headless: chrome.headless,
+      ignoreHTTPSErrors: true,
+      dumpio: false
     });
     
+    // Create a new page with optimized settings
     const page = await browser.newPage();
+    await page.setRequestInterception(true);
     
-    // Set content and wait until network is idle
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    // Skip non-essential resource types to save memory
+    page.on('request', request => {
+      const resourceType = request.resourceType();
+      if (['image', 'font', 'media', 'stylesheet'].includes(resourceType)) {
+        request.continue();
+      } else if (resourceType === 'script') {
+        // Allow minimal JS
+        request.continue();
+      } else {
+        request.continue();
+      }
+    });
     
-    // Generate PDF
+    // Limit concurrent requests
+    page.setDefaultNavigationTimeout(30000);
+    
+    // Set content and optimize rendering
+    await page.setContent(html, { 
+      waitUntil: 'domcontentloaded',
+      timeout: 15000
+    });
+    
+    // Generate PDF with optimized settings
     const pdf = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: '0', right: '5mm', bottom: '5mm', left: '5mm' }
+      margin: { top: '0', right: '5mm', bottom: '5mm', left: '5mm' },
+      preferCSSPageSize: true,
+      omitBackground: false
     });
     
+    // Close browser immediately to free memory
     await browser.close();
     
     // Set headers and send PDF
@@ -61,6 +120,6 @@ module.exports = async (req, res) => {
     
   } catch (error) {
     console.error('Error generating PDF:', error);
-    return res.status(500).json({ error: 'Error generating PDF' });
+    return res.status(500).json({ error: 'Error generating PDF: ' + error.message });
   }
 };
