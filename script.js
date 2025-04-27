@@ -106,8 +106,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 };
 
-                // Generate PDF
-                return html2pdf().from(element).set(opt).save();
+                // Generate PDF and open in new tab (for iPhone compatibility)
+                return html2pdf().from(element).set(opt).outputPdf('blob');
+            })
+            .then(blob => {
+                // Open PDF in a new tab
+                const blobUrl = URL.createObjectURL(blob);
+                window.open(blobUrl, '_blank');
             })
             .catch(error => {
                 console.error('PDF generation failed:', error);
@@ -118,6 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 downloadBtn.textContent = originalText;
                 downloadBtn.disabled = false;
             });
+    });
     });
     
     // Form validation
@@ -247,4 +253,4 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('preview-ifscCode').textContent = document.getElementById('ifscCode').value;
         document.getElementById('preview-termsConditions').textContent = document.getElementById('termsConditions').value;
     }
-});
+
