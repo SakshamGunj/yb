@@ -2,322 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yaara Services - Invoice Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Travel Invoice Generator</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        /* Additional responsive styles */
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
-            }
-            
-            .form-section {
-                padding: 15px;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
-            
-            .button-group button {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-            
-            .item-row {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .form-container, .invoice-preview {
-                max-height: none;
-                height: auto;
-            }
-        }
-        
-        /* Form enhancement styles */
-        .form-container {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border-radius: 12px;
-            background: #ffffff;
-            padding: 1.5rem;
-            position: relative;
-            max-height: 80vh; /* Restore scrollable behavior */
-            overflow-y: auto;
-        }
-        
-        .form-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: #2a4aa1;
-        }
-        
-        .form-container h2 {
-            color: #2a4aa1;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.25rem;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 0.75rem;
-        }
-        
-        .form-section {
-            margin-bottom: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            background-color: #ffffff;
-            overflow: hidden;
-        }
-        
-        .form-section h3 {
-            font-size: 1rem;
-            color: #2a4aa1;
-            padding: 0.75rem 1rem;
-            margin: 0;
-            background-color: #f9fafb;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        /* Enhanced form fields */
-        input, textarea, select {
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            padding: 0.75rem;
-            font-size: 0.95rem;
-            width: 100%;
-            color: #374151;
-            background-color: #fcfcfc;
-        }
-        
-        input:hover, textarea:hover, select:hover {
-            border-color: #cbd5e1;
-            background-color: #fff;
-        }
-        
-        input:focus, textarea:focus, select:focus {
-            border-color: #3b63c5;
-            box-shadow: 0 0 0 2px rgba(59, 99, 197, 0.2);
-            outline: none;
-            background-color: #fff;
-        }
-        
-        textarea {
-            min-height: 80px;
-        }
-        
-        label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            display: block;
-            color: #374151;
-            font-size: 0.9rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-section .form-group:last-child {
-            margin-bottom: 1rem;
-        }
-        
-        /* Fix form row layout */
-        .form-row {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .form-row .form-group {
-            flex: 1;
-        }
-        
-        /* Improve item rows */
-        .item-row {
-            display: grid;
-            grid-template-columns: 3fr 1fr 1.5fr 1.5fr;
-            gap: 0.75rem;
-            background-color: #f8fafc;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .lineTotal {
-            background-color: #f3f4f6;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            padding: 0.6rem;
-            display: inline-block;
-            text-align: right;
-        }
-        
-        .invoice-preview {
-            background: #f3f4f6;
-            border-radius: 8px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        /* Fix scrolling issues on mobile */
-        @media (max-width: 1024px) {
-            .form-container, .invoice-preview {
-                max-height: 65vh;
-                margin-bottom: 1.5rem;
-            }
-        }
-
-        /* Enhanced mobile styles for form fields */
-        @media (max-width: 768px) {
-            /* Improve form field visibility */
-            input, textarea, select {
-                font-size: 16px; /* Prevent iOS zoom on focus */
-                padding: 12px;
-                background-color: #ffffff;
-                border-color: #c0c0c0;
-            }
-            
-            /* Better labels on mobile */
-            label {
-                font-size: 0.95rem;
-                margin-bottom: 6px;
-                color: #333;
-                font-weight: 600;
-            }
-            
-            /* Improve spacing */
-            .form-group {
-                margin-bottom: 20px;
-            }
-            
-            /* Enhance visual separation */
-            .form-section {
-                margin-bottom: 25px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            }
-            
-            .form-section h3 {
-                font-size: 1.1rem;
-                padding: 12px 15px;
-            }
-            
-            /* Fix item rows on mobile */
-            .item-row {
-                display: flex;
-                flex-direction: column;
-                padding: 15px;
-                margin-bottom: 15px;
-            }
-            
-            /* Make amount field look better */
-            .lineTotal {
-                width: 100%;
-                text-align: right;
-                font-weight: 500;
-                font-size: 16px;
-                padding: 12px;
-                color: #2a4aa1;
-            }
-            
-            /* Make buttons more touchable */
-            .primary-btn, .secondary-btn, #addItemBtn {
-                padding: 12px 20px;
-                font-size: 16px;
-                min-height: 48px; /* Good touch target */
-            }
-            
-            /* Fix container sizing */
-            .form-container {
-                padding: 12px;
-                max-height: none; /* Remove scrolling on mobile */
-                height: auto;
-                overflow: visible;
-            }
-        }
-
-        /* Mobile PDF optimization */
-        .mobile-pdf-mode {
-            padding: 5px !important;
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-        
-        .mobile-pdf-mode .blueside-header {
-            padding: 10px !important;
-            min-height: auto !important;
-            flex-direction: column !important;
-        }
-        
-        .mobile-pdf-mode img {
-            max-width: 150px !important;
-            height: auto !important;
-        }
-        
-        .mobile-pdf-mode .blueside-body {
-            padding: 8px !important;
-        }
-        
-        /* Loading indicator */
-        .loading-text {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .loading-text::after {
-            content: '';
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% { content: '.'; }
-            33% { content: '..'; }
-            66% { content: '...'; }
-            100% { content: '.'; }
-        }
-        
-        @media (max-width: 768px) {
-            /* Add a special view for PDF preview on mobile */
-            .invoice-preview {
-                background-color: white;
-                padding: 10px 5px;
-                border: 1px solid #e5e7eb;
-                overflow-x: hidden !important;
-            }
-            
-            /* Make sure invoice doesn't overflow */
-            .invoice {
-                width: 100% !important;
-                overflow-x: hidden !important;
-                transform: scale(0.95);
-                transform-origin: top center;
-            }
-            
-            /* Ensure QR code doesn't break layout */
-            img[alt="UPI QR Code"] {
-                max-width: 120px !important;
-                height: auto !important;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="mountain-bg"></div>
     
     <div class="container">
-        <header>
-            <h1>Invoice Generator</h1>
-            <p>Create professional invoices for your travel and adventure business</p>
-        </header>
-
-        <main>
+        <h1>Yara Service Invoice Generator</h1>
+        
+        <div class="app-container">
             <div class="form-container">
                 <h2>Enter Invoice Details</h2>
                 <form id="invoiceForm">
@@ -325,16 +22,19 @@
                         <h3>Your Company Details</h3>
                         <div class="form-group">
                             <label for="companyName">Company Name</label>
-                            <input type="text" id="companyName" value="Yaara Services" required>
+                            <input type="text" id="companyName" value="Yara Services" required>
                         </div>
                         <div class="form-group">
                             <label for="companyAddress">Company Address</label>
-                            <textarea id="companyAddress" required>5th Mile Lumsey, Tadong beside Hotel Lumsey Inn.
-Sikkim, India - 737101</textarea>
+                            <textarea id="companyAddress" required>5th Mile Lumsey, Tadong beside Hotel Lumsey Inn, Gangtok, Sikkim - 737101</textarea>
                         </div>
                         <div class="form-group">
                             <label for="companyPhone">Phone Number</label>
-                            <input type="text" id="companyPhone" value="+91 98830 23091" required>
+                            <input type="text" id="companyPhone" value="+91 9883023091" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyEmail">Email</label>
+                            <input type="email" id="companyEmail" value="support@yaraservice.com" required>
                         </div>
                         <div class="form-group">
                             <label for="companyGST">GSTIN</label>
@@ -360,82 +60,273 @@ Sikkim, India - 737101</textarea>
 
                     <div class="form-section">
                         <h3>Invoice Details</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="invoiceNumber">Invoice Number</label>
-                                <input type="text" id="invoiceNumber" value="INV-001" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="invoiceDate">Invoice Date</label>
-                                <input type="date" id="invoiceDate" required>
-                            </div>
+                        <div class="form-group">
+                            <label for="invoiceNumber">Invoice Number</label>
+                            <input type="text" id="invoiceNumber" value="INV-001-2025-01" required>
                         </div>
                         <div class="form-group">
-                            <label for="advancePayment">Advance Payment (₹)</label>
-                            <input type="number" id="advancePayment" value="0" min="0" step="0.01">
+                            <label for="invoiceDate">Invoice Date</label>
+                            <input type="date" id="invoiceDate" required>
                         </div>
                     </div>
 
                     <div class="form-section">
-                        <h3>Items</h3>
+                        <h3>Invoice Items</h3>
                         <div id="itemsList">
                             <div class="item-row">
                                 <div class="form-group">
-                                    <label for="itemName1">Item Description</label>
-                                    <input type="text" id="itemName1" class="itemName" required>
+                                    <label>Item Description</label>
+                                    <input type="text" class="item-description" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="itemQty1">Qty</label>
-                                    <input type="number" id="itemQty1" class="itemQty" min="1" required>
+                                    <label>Price (₹)</label>
+                                    <input type="number" class="item-price" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="itemPrice1">Unit Price (₹)</label>
-                                    <input type="number" id="itemPrice1" class="itemPrice" min="0" step="0.01" required>
+                                    <label>Qty</label>
+                                    <input type="number" class="item-qty" value="1" required>
                                 </div>
-                                <div class="form-group item-total">
-                                    <label>Amount (₹)</label>
-                                    <span class="lineTotal">0.00</span>
-                                </div>
+                                <button type="button" class="remove-item">✕</button>
                             </div>
                         </div>
                         <button type="button" id="addItemBtn">+ Add Item</button>
                     </div>
 
                     <div class="form-section">
-                        <h3>Tax & Additional Information</h3>
+                        <h3>Additional Details</h3>
                         <div class="form-group">
-                            <label for="taxRate">GST Rate (%)</label>
-                            <input type="number" id="taxRate" value="18" min="0" max="100">
+                            <label for="taxRate">Tax Rate (%)</label>
+                            <input type="number" id="taxRate" value="18">
                         </div>
                         <div class="form-group">
-                            <label for="notes">Notes / Terms</label>
-                            <textarea id="notes">Thank you for choosing Yaara Services! Payment is due within 15 days.</textarea>
+                            <label for="discountAmount">Discount Amount (Optional)</label>
+                            <input type="number" id="discountAmount" value="0" min="0">
                         </div>
                         <div class="form-group">
-                            <label for="bankDetails">Bank Details</label>
-                            <textarea id="bankDetails">Bank: Mountain National Bank
-Account Name: Yaara Services
-Account Number: 1234567890
-IFSC Code: MNBC0001234
-Branch: Mountain View</textarea>
+                            <label for="advancePayment">Advance Payment (Optional)</label>
+                            <input type="number" id="advancePayment" value="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="bankName">Bank Name</label>
+                            <input type="text" id="bankName" value="Canara Bank">
+                        </div>
+                        <div class="form-group">
+                            <label for="accountNumber">Account Number</label>
+                            <input type="text" id="accountNumber" value="120033745630">
+                        </div>
+                        <div class="form-group">
+                            <label for="ifscCode">IFSC Code</label>
+                            <input type="text" id="ifscCode" value="CNRB00019411">
+                        </div>
+                        <div class="form-group">
+                            <label for="termsConditions">Terms & Conditions</label>
+                            <textarea id="termsConditions">Please contact us if any issues occur in 14 working days.</textarea>
                         </div>
                     </div>
 
-                    <div class="button-group">
-                        <button type="button" id="generateInvoiceBtn" class="primary-btn">Generate Invoice</button>
-                        <button type="button" id="downloadPdfBtn" class="secondary-btn" disabled>Download PDF</button>
+                    <div class="form-actions">
+                        <button type="button" id="generateInvoice">Generate Invoice</button>
                     </div>
                 </form>
             </div>
 
-            <div id="invoicePreview" class="invoice-preview">
-                <div id="invoice" class="invoice">
-                    <!-- Invoice will be generated here -->
+            <div class="preview-container" id="invoicePreview">
+                <div class="invoice-actions">
+                    <button type="button" id="downloadPDF">Download as PDF</button>
+                    <button type="button" id="backToForm">Edit Invoice</button>
+                </div>
+                
+                <!-- Add wrapper for consistent mobile viewing -->
+                <div class="invoice-wrapper">
+                    <div class="invoice" id="invoice">
+                        <div class="invoice-header">
+                            <div class="company-info">
+                                <img src="https://i.ibb.co/9m1t8ytv/Untitled-design-4.png" alt="Company Logo" class="logo">
+                                <h2 id="preview-companyName">SEMPURNA Travel & Tours</h2>
+                            </div>
+                            <div class="invoice-title">
+                                <h1>INVOICE</h1>
+                                <p id="preview-invoiceNumber"># INV-001-2025-01</p>
+                            </div>
+                        </div>
+                        
+                        <div class="invoice-details">
+                            <div class="company-details">
+                                <p id="preview-companyAddress">123 Mountain View, Adventure Road, Travel City</p>
+                                <p>Phone: <span id="preview-companyPhone">+91 123 456 7890</span></p>
+                                <p>Email: <span id="preview-companyEmail">support@yaraservice.com</span></p>
+                                <p>GSTIN: <span id="preview-companyGST">22AAAAA0000A1Z5</span></p>
+                            </div>
+                            <div class="invoice-info">
+                                <div class="date-info">
+                                    <p><strong>Date:</strong> <span id="preview-invoiceDate">01/01/2025</span></p>
+                                </div>
+                                <div class="client-info">
+                                    <p><strong>INVOICE TO:</strong></p>
+                                    <p id="preview-clientName">Client Name</p>
+                                    <p id="preview-clientAddress">Client Address</p>
+                                    <p id="preview-clientGSTLabel">GSTIN: <span id="preview-clientGST"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="invoice-items">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>NO.</th>
+                                        <th>Item Description</th>
+                                        <th>Price</th>
+                                        <th>Qty.</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="preview-items">
+                                    <!-- Items will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="invoice-summary">
+                            <div class="thanks-message">
+                                <h3>Thank you for your business</h3>
+                                <div class="contact-info">
+                                    <div><span class="icon">📞</span> <span id="preview-companyPhone2">+91 9883023091</span></div>
+                                    <div><span class="icon">📧</span> <span id="preview-companyEmail2">support@yaraservice.com</span></div>
+                                </div>
+                            </div>
+                            <div class="totals">
+                                <div class="subtotal-row">
+                                    <span>Sub total</span>
+                                    <span id="preview-subtotal">₹0.00</span>
+                                </div>
+                                <div class="tax-row">
+                                    <span>Tax (<span id="preview-taxRate">18</span>%)</span>
+                                    <span id="preview-tax">₹0.00</span>
+                                </div>
+                                <div id="discount-row" class="discount-row" style="display: none;">
+                                    <span>Discount</span>
+                                    <span id="preview-discount">₹0.00</span>
+                                </div>
+                                <div class="total-row">
+                                    <span>Total</span>
+                                    <span id="preview-total">₹0.00</span>
+                                </div>
+                                <div id="advance-row" class="advance-row" style="display: none;">
+                                    <span>Advance Payment</span>
+                                    <span id="preview-advance">₹0.00</span>
+                                </div>
+                                <div id="balance-row" class="balance-row" style="display: none;">
+                                    <span>Balance Due</span>
+                                    <span id="preview-balance">₹0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="invoice-footer">
+                            <div class="payment-info">
+                                <h3>PAYMENT METHOD</h3>
+                                <div class="payment-details">
+                                    <div class="bank-details">
+                                        <p><span class="icon">🏦</span> <span id="preview-bankName">Travel Bank of India</span></p>
+                                        <p>Acc: <span id="preview-accountNumber">1234567890</span></p>
+                                        <p>IFSC: <span id="preview-ifscCode">TRBI0001234</span></p>
+                                    </div>
+                                    <div class="upi-qr">
+                                        <img src="https://i.ibb.co/r2WyrJkV/Whats-App-Image-2025-04-25-at-13-33-27.jpg" alt="UPI QR Code">
+                                        <p>Scan to pay</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="terms-section">
+                                <h3>TERMS & CONDITIONS</h3>
+                                <p id="preview-termsConditions">Please contact us if any issues occur in 14 working days.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="signature-section">
+                            <img src="https://i.ibb.co/Y40ck28f/Whats-App-Image-2025-04-25-at-13-34-44.jpg" alt="Signature">
+                        </div>
+                    </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
-
+    
+    <!-- Add an additional fallback PDF script -->
+    <script>
+        // Improved fallback PDF generator
+        window.addEventListener('load', function() {
+            // Check if the download button has an event listener
+            if (!document.getElementById('downloadPDF').onclick) {
+                document.getElementById('downloadPDF').addEventListener('click', function() {
+                    // Check if PDF library is loaded
+                    if (typeof html2pdf === 'undefined') {
+                        alert('PDF generation library not loaded. Please check your internet connection and try again.');
+                        return;
+                    }
+                    
+                    const downloadBtn = this;
+                    downloadBtn.textContent = 'Generating PDF...';
+                    downloadBtn.disabled = true;
+                    
+                    // Get the invoice element
+                    const element = document.getElementById('invoice');
+                    
+                    // Simple, reliable PDF options
+                    const options = {
+                        margin: 10,
+                        filename: 'Yara_Services_Invoice.pdf',
+                        image: { type: 'jpeg', quality: 1 },
+                        html2canvas: { 
+                            scale: 2, 
+                            useCORS: true,
+                            logging: false
+                        },
+                        jsPDF: { 
+                            unit: 'mm', 
+                            format: 'a4', 
+                            orientation: 'portrait' 
+                        }
+                    };
+                    
+                    // Generate and download PDF
+                    html2pdf()
+                        .from(element)
+                        .set(options)
+                        .save()
+                        .then(() => {
+                            console.log('PDF generated successfully');
+                        })
+                        .catch((err) => {
+                            console.error('PDF generation error:', err);
+                            alert('There was an error generating the PDF. Please try again.');
+                        })
+                        .finally(() => {
+                            downloadBtn.textContent = 'Download as PDF';
+                            downloadBtn.disabled = false;
+                        });
+                });
+            }
+        });
+    </script>
+    
+    <!-- Make sure to load images before generating PDF -->
+    <script>
+        // Preload all invoice images
+        window.addEventListener('load', function() {
+            const invoiceImages = document.querySelectorAll('#invoice img');
+            invoiceImages.forEach(img => {
+                // Force image loading
+                const newImg = new Image();
+                newImg.src = img.src;
+            });
+        });
+    </script>
+    
+    <!-- Ensure script is loaded correctly -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="script.js"></script>
 </body>
 </html>
