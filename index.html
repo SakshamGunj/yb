@@ -4,123 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Generator & Preview - Yara Escape</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
+        /* --- ALL CSS STYLES REMAIN EXACTLY THE SAME AS THE PREVIOUS WORKING VERSION --- */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-        :root { /* CSS Variables */
-            --primary-color: #b92c2c; --secondary-color: #5a67d8; --light-gray: #f7fafc;
-            --medium-gray: #e2e8f0; --dark-gray: #4a5568; --text-color: #2d3748;
-            --border-color: #cbd5e0; --success-color: #38a169; --error-color: #e53e3e;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --input-focus-border: #a3bffa; --input-focus-shadow: 0 0 0 3px rgba(96, 165, 250, 0.4);
-        }
+        :root { /* CSS Variables */ --primary-color: #b92c2c; --secondary-color: #5a67d8; --light-gray: #f7fafc; --medium-gray: #e2e8f0; --dark-gray: #4a5568; --text-color: #2d3748; --border-color: #cbd5e0; --success-color: #38a169; --error-color: #e53e3e; --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); --input-focus-border: #a3bffa; --input-focus-shadow: 0 0 0 3px rgba(96, 165, 250, 0.4); }
         body { font-family: 'Poppins', sans-serif; margin: 0; padding: 25px 15px; background-color: var(--light-gray); color: var(--text-color); font-size: 15px; line-height: 1.6; }
         .main-container { max-width: 1100px; margin: auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: var(--card-shadow); }
-        h1, h2, h3 { color: #1a202c; margin-bottom: 1em; }
-        h1 { text-align: center; margin-bottom: 1.5em; color: var(--primary-color); font-weight: 700;}
-        h2 { font-size: 1.5em; font-weight: 600; margin-bottom: 1.2em; }
-        h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 1.2em; border-bottom: 1px solid var(--medium-gray); padding-bottom: 0.5em; }
-
-        /* --- Modern Form Styling (Kept from previous) --- */
-        #invoice-form { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--medium-gray); }
-        .form-section { margin-bottom: 30px; padding: 25px; border: 1px solid var(--medium-gray); border-radius: 8px; background-color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { margin-bottom: 8px; font-weight: 500; font-size: 0.9em; color: var(--dark-gray); text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="email"], .form-group input[type="tel"], .form-group input[type="date"], .form-group textarea { padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1em; width: 100%; box-sizing: border-box; background-color: #fff; color: var(--text-color); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--input-focus-border); box-shadow: var(--input-focus-shadow); }
-        .form-group textarea { min-height: 70px; resize: vertical; }
-        #line-items-container .line-item { display: grid; grid-template-columns: 3fr 1fr 1.5fr 0.5fr; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--medium-gray); }
-        #line-items-container .line-item:last-child { border-bottom: none; }
-        .line-item input { font-size: 0.95em !important; padding: 9px 12px !important; }
-        .remove-item-btn { padding: 9px 11px; background-color: var(--error-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: background-color 0.3s ease; text-align: center; line-height: 1; }
-        .remove-item-btn:hover { background-color: #c53030; }
-        .add-item-btn { margin-top: 18px; padding: 10px 18px; background-color: var(--success-color); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; transition: background-color 0.3s ease; font-weight: 500; }
-        .add-item-btn:hover { background-color: #2f855a; }
-        .add-item-btn i { margin-right: 6px; }
-        .form-buttons { text-align: center; margin-top: 25px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;}
-        .form-buttons button { padding: 11px 22px; color: white; border: none; border-radius: 6px; font-size: 1.05em; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        #generate-preview-btn { background-color: var(--primary-color); }
-        #generate-preview-btn:hover { background-color: #9e2525; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        #preview-pdf-btn { background-color: var(--secondary-color); }
-        #preview-pdf-btn:hover { background-color: #4c51bf; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        #preview-pdf-btn:disabled { background-color: #a3bffa; cursor: not-allowed; }
-        #preview-pdf-btn .fa-spin { margin-left: 8px; }
-
-        /* --- Invoice Preview Section --- */
-        #invoice-preview-section { margin-top: 35px; border: 1px solid var(--secondary-color); padding: 25px; background-color: #fff; border-radius: 8px; }
-        #invoice-preview-section.hidden { display: none; }
-        #invoice-preview-section h2 { text-align: center; margin-bottom: 25px; font-size: 1.4em; color: var(--secondary-color); }
-        #invoice-preview-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; }
-
-        /* --- Invoice Box (Template) Styles --- */
-        .invoice-box { padding: 20px; border: 1px solid #ccc; background-color: #fff; font-size: 16px; width: 850px; box-sizing: border-box; margin: 0 auto; }
-        .top-bar { text-align: right; margin-bottom: 15px; font-size: 0.9em; color: #444; }
-        .top-bar span { margin-left: 15px; font-weight: 600; color: #000; }
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-        .company-info .logo-img { width: 105px; height: 105px; display: block; margin-bottom: 6px; border-radius: 50%; object-fit: cover; }
-        .company-info h2 { margin: 0 0 5px 0; font-size: 1.75em; color: #111; font-weight: 600; }
-        .company-info p { margin: 1px 0; font-size: 1.05em; color: #444; }
-        .invoice-details { text-align: right; margin-top: 3px; }
-        .invoice-details h1 { font-size: 3.4em; margin: 0 0 6px 0; color: #111; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
-        .invoice-details p { margin: 2px 0; font-size: 1.1em; color: #333; }
-        .invoice-details strong { display: inline-block; min-width: 110px; font-weight: 600; color: #000; }
-        .billing-info { display: flex; justify-content: space-between; align-items: flex-start; /* Use flex-start for alignment */ margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #ddd; }
-        .invoice-to { width: 55%; padding-right: 15px; } /* Give slightly more space to billing */
-        .payment-column { width: 45%; display: flex; flex-direction: column; align-items: flex-end;}
-        .invoice-to h3 { margin: 0 0 5px 0; font-size: 0.9em; color: var(--primary-color); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .invoice-to p { margin: 3px 0; line-height: 1.5; font-size: 1.1em; }
-        .invoice-to p.contact-info { font-size: 1em; color: #555;}
-        .invoice-to strong { font-weight: 600; color: #222; }
-        .invoice-to .guest-name { font-weight: 700; color: #000; }
-
-        /* --- Simplified PAY HERE Label --- */
-        .pay-here-section { /* Container for UPI details, label, QR */
-            text-align: right; /* Align content right */
-        }
-        .upi-details { margin-bottom: 6px; font-size: 0.85em; color: var(--primary-color); font-weight: 600; }
-        .pay-here-label-top { /* New non-rotated label */
-             display: block; /* Make it block */
-             text-align: center; /* Center text */
-             background-color: var(--primary-color);
-             color: white;
-             padding: 4px 0; /* Vertical padding */
-             margin-bottom: 6px; /* Space below label */
-             font-weight: 600;
-             font-size: 0.9em;
-             letter-spacing: 1px;
-             text-transform: uppercase;
-             width: 160px; /* Match QR code width */
-             margin-left: auto; /* Align right */
-             margin-right: 0;
-             border-radius: 3px 3px 0 0; /* Optional: round top corners */
-        }
-        .qr-code-img { width: 160px; height: 160px; display: block; border: 1px solid #eee; margin-left: auto; margin-right: 0;}
-
-        /* --- Rest of Invoice Styles (Unchanged from previous working version) --- */
-        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
-        .items-table thead { background-color: var(--primary-color); color: #fff; }
-        .items-table th { padding: 8px 12px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.7px; }
-        .items-table td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; font-size: 1.05em; }
-        .items-table th.description, .items-table td.description { width: 45%; } .items-table th.price, .items-table td.price { width: 20%; } .items-table th.qty, .items-table td.qty { width: 15%; text-align: center;} .items-table th.subtotal, .items-table td.subtotal { width: 20%; }
-        #invoice-items-body tr:last-child td { border-bottom: none; }
-        .items-table tbody tr.divider td { border-bottom: 1.5px solid #d0d0d0; padding: 0; height: 0; line-height: 0; margin-top: 5px; display: block; }
-        .items-table .description strong { font-weight: 600; color: #111; font-size: 1.1em; } .items-table .description p { margin: 2px 0 0 0; font-size: 1em; color: #555; } .items-table .description .bank-label { font-weight: 600; display: inline-block; min-width: 115px; color: #333; }
-        .items-table .align-right { text-align: right; } .items-table .price { font-weight: 500; } .items-table .qty { font-weight: 500;} .items-table .subtotal { font-weight: 600;}
-        .summary-section { display: flex; justify-content: space-between; margin-top: 5px; padding-top: 12px; border-top: 1px solid #d0d0d0; flex-wrap: wrap; }
-        .terms-conditions { width: 100%; font-size: 1em; color: #444; padding-right: 0; margin-bottom: 15px;} .totals-table-area { width: 100%; text-align: right; }
-        @media (min-width: 768px) { .summary-section { flex-wrap: nowrap; } .terms-conditions { width: 55%; padding-right: 10px; margin-bottom: 0;} .totals-table-area { width: 45%; } }
-        .terms-conditions h4 { margin: 0 0 6px 0; font-size: 1.05em; font-weight: 600; color: #222; text-transform: uppercase; letter-spacing: 0.5px; } .terms-conditions p { margin: 2px 0; line-height: 1.5; } .terms-conditions .refund-policy { color: var(--success-color); font-weight: 600; } .terms-conditions .refund-policy i { margin-right: 6px; }
-        #invoice-totals-table { width: 100%; border-collapse: collapse; font-size: 1.1em; } #invoice-totals-table td { padding: 4px 0px; } #invoice-totals-table tr td:first-child { text-align: right; font-weight: 600; color: #444; padding-right: 15px; } #invoice-totals-table tr td:last-child { text-align: right; font-weight: 600; color: #111; min-width: 115px; } #invoice-totals-table tr.discount td:last-child { font-weight: 500; } #invoice-totals-table tr.tax td:last-child { font-weight: 500; }
-        .total-due-wrapper { margin-top: 8px; } .total-due-wrapper table { width: 100%; } #invoice-totals-table tr.total-due td { font-weight: 700; font-size: 1.4em; color: #fff; background-color: var(--primary-color); padding: 8px 12px; display: block; } #invoice-totals-table tr.total-due td:first-child { padding-right: 15px; text-align: right; }
+        h1, h2, h3 { color: #1a202c; margin-bottom: 1em; } h1 { text-align: center; margin-bottom: 1.5em; color: var(--primary-color); font-weight: 700;} h2 { font-size: 1.5em; font-weight: 600; margin-bottom: 1.2em; } h3 { font-size: 1.25em; font-weight: 600; margin-bottom: 1.2em; border-bottom: 1px solid var(--medium-gray); padding-bottom: 0.5em; }
+        #invoice-form { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--medium-gray); } .form-section { margin-bottom: 30px; padding: 25px; border: 1px solid var(--medium-gray); border-radius: 8px; background-color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); } .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; } .form-group { display: flex; flex-direction: column; } .form-group label { margin-bottom: 8px; font-weight: 500; font-size: 0.9em; color: var(--dark-gray); text-transform: uppercase; letter-spacing: 0.5px; } .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="email"], .form-group input[type="tel"], .form-group input[type="date"], .form-group textarea { padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1em; width: 100%; box-sizing: border-box; background-color: #fff; color: var(--text-color); transition: border-color 0.2s ease, box-shadow 0.2s ease; } .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--input-focus-border); box-shadow: var(--input-focus-shadow); } .form-group textarea { min-height: 70px; resize: vertical; }
+        #line-items-container .line-item { display: grid; grid-template-columns: 3fr 1fr 1.5fr 0.5fr; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--medium-gray); } #line-items-container .line-item:last-child { border-bottom: none; } .line-item input { font-size: 0.95em !important; padding: 9px 12px !important; } .remove-item-btn { padding: 9px 11px; background-color: var(--error-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: background-color 0.3s ease; text-align: center; line-height: 1; } .remove-item-btn:hover { background-color: #c53030; } .add-item-btn { margin-top: 18px; padding: 10px 18px; background-color: var(--success-color); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; transition: background-color 0.3s ease; font-weight: 500; } .add-item-btn:hover { background-color: #2f855a; } .add-item-btn i { margin-right: 6px; }
+        .form-buttons { text-align: center; margin-top: 25px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;} .form-buttons button { padding: 11px 22px; color: white; border: none; border-radius: 6px; font-size: 1.05em; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); } #generate-preview-btn { background-color: var(--primary-color); } #generate-preview-btn:hover { background-color: #9e2525; box-shadow: 0 4px 8px rgba(0,0,0,0.15); } #preview-pdf-btn { background-color: var(--secondary-color); } #preview-pdf-btn:hover { background-color: #4c51bf; box-shadow: 0 4px 8px rgba(0,0,0,0.15); } #preview-pdf-btn:disabled { background-color: #a3bffa; cursor: not-allowed; } #preview-pdf-btn .fa-spin { margin-left: 8px; }
+        #invoice-preview-section { margin-top: 35px; border: 1px solid var(--secondary-color); padding: 25px; background-color: #fff; border-radius: 8px; } #invoice-preview-section.hidden { display: none; } #invoice-preview-section h2 { text-align: center; margin-bottom: 25px; font-size: 1.4em; color: var(--secondary-color); } #invoice-preview-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; }
+        .invoice-box { padding: 20px; border: 1px solid #ccc; background-color: #fff; font-size: 16px; width: 850px; box-sizing: border-box; margin: 0 auto; } .top-bar { text-align: right; margin-bottom: 15px; font-size: 0.9em; color: #444; } .top-bar span { margin-left: 15px; font-weight: 600; color: #000; } .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; } .company-info .logo-img { width: 105px; height: 105px; display: block; margin-bottom: 6px; border-radius: 50%; object-fit: cover; } .company-info h2 { margin: 0 0 5px 0; font-size: 1.75em; color: #111; font-weight: 600; } .company-info p { margin: 1px 0; font-size: 1.05em; color: #444; } .invoice-details { text-align: right; margin-top: 3px; } .invoice-details h1 { font-size: 3.4em; margin: 0 0 6px 0; color: #111; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; } .invoice-details p { margin: 2px 0; font-size: 1.1em; color: #333; } .invoice-details strong { display: inline-block; min-width: 110px; font-weight: 600; color: #000; }
+        .billing-info { display: flex; justify-content: space-between; align-items: flex-start; /* Changed back to flex-start */ margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #ddd; } .invoice-to { width: 55%; padding-right: 15px; } .payment-column { width: 45%; display: flex; flex-direction: column; align-items: flex-end;} .invoice-to h3 { margin: 0 0 5px 0; font-size: 0.9em; color: var(--primary-color); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; } .invoice-to p { margin: 3px 0; line-height: 1.5; font-size: 1.1em; } .invoice-to p.contact-info { font-size: 1em; color: #555;} .invoice-to strong { font-weight: 600; color: #222; } .invoice-to .guest-name { font-weight: 700; color: #000; }
+        .pay-here-section { text-align: right; } .upi-details { margin-bottom: 6px; font-size: 0.85em; color: var(--primary-color); font-weight: 600; } .pay-here-label-top { display: block; text-align: center; background-color: var(--primary-color); color: white; padding: 4px 0; margin-bottom: 6px; font-weight: 600; font-size: 0.9em; letter-spacing: 1px; text-transform: uppercase; width: 160px; margin-left: auto; margin-right: 0; border-radius: 3px 3px 0 0; } .qr-code-img { width: 160px; height: 160px; display: block; border: 1px solid #eee; margin-left: auto; margin-right: 0;}
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 0; } .items-table thead { background-color: var(--primary-color); color: #fff; } .items-table th { padding: 8px 12px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.7px; } .items-table td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; font-size: 1.05em; } .items-table th.description, .items-table td.description { width: 45%; } .items-table th.price, .items-table td.price { width: 20%; } .items-table th.qty, .items-table td.qty { width: 15%; text-align: center;} .items-table th.subtotal, .items-table td.subtotal { width: 20%; } #invoice-items-body tr:last-child td { border-bottom: none; } .items-table tbody tr.divider td { border-bottom: 1.5px solid #d0d0d0; padding: 0; height: 0; line-height: 0; margin-top: 5px; display: block; } .items-table .description strong { font-weight: 600; color: #111; font-size: 1.1em; } .items-table .description p { margin: 2px 0 0 0; font-size: 1em; color: #555; } .items-table .description .bank-label { font-weight: 600; display: inline-block; min-width: 115px; color: #333; } .items-table .align-right { text-align: right; } .items-table .price { font-weight: 500; } .items-table .qty { font-weight: 500;} .items-table .subtotal { font-weight: 600;}
+        .summary-section { display: flex; justify-content: space-between; margin-top: 5px; padding-top: 12px; border-top: 1px solid #d0d0d0; flex-wrap: wrap; } .terms-conditions { width: 100%; font-size: 1em; color: #444; padding-right: 0; margin-bottom: 15px;} .totals-table-area { width: 100%; text-align: right; } @media (min-width: 768px) { .summary-section { flex-wrap: nowrap; } .terms-conditions { width: 55%; padding-right: 10px; margin-bottom: 0;} .totals-table-area { width: 45%; } } .terms-conditions h4 { margin: 0 0 6px 0; font-size: 1.05em; font-weight: 600; color: #222; text-transform: uppercase; letter-spacing: 0.5px; } .terms-conditions p { margin: 2px 0; line-height: 1.5; } .terms-conditions .refund-policy { color: var(--success-color); font-weight: 600; } .terms-conditions .refund-policy i { margin-right: 6px; }
+        #invoice-totals-table { width: 100%; border-collapse: collapse; font-size: 1.1em; } #invoice-totals-table td { padding: 4px 0px; } #invoice-totals-table tr td:first-child { text-align: right; font-weight: 600; color: #444; padding-right: 15px; } #invoice-totals-table tr td:last-child { text-align: right; font-weight: 600; color: #111; min-width: 115px; } #invoice-totals-table tr.discount td:last-child { font-weight: 500; } #invoice-totals-table tr.tax td:last-child { font-weight: 500; } .total-due-wrapper { margin-top: 8px; } .total-due-wrapper table { width: 100%; } #invoice-totals-table tr.total-due td { font-weight: 700; font-size: 1.4em; color: #fff; background-color: var(--primary-color); padding: 8px 12px; display: block; } #invoice-totals-table tr.total-due td:first-child { padding-right: 15px; text-align: right; }
         .footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; font-size: 1.05em; color: #444; } .footer .thank-you { font-weight: 600; color: #111; margin-bottom: 12px; text-align: left; font-size: 1.15em; text-transform: uppercase; letter-spacing: 0.5px; } .footer-columns { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px;} .footer-contact { text-align: left; flex-basis: 50%; min-width: 250px; } .signature-area { text-align: center; flex-basis: 40%; min-width: 200px;} @media (min-width: 500px) { .signature-area { text-align: right; } }
         .signature-img { display: block; width: 165px; height: auto; margin: 0 auto 3px auto; } .signature-area p { margin-top: 2px; font-weight: 600; color: #333; font-size: 1em; text-align: center; } .final-invoice-info { text-align: center; margin-top: 18px; font-size: 0.9em; color: #555; padding-top: 8px; border-top: 1px solid #ddd; width: 100%;} @media (min-width: 500px) { .final-invoice-info { text-align: left; } } .final-invoice-info span { margin-right: 15px; font-weight: 600; color: #111;}
 
-        /* --- Mobile Responsiveness FOR FORM --- */
+        /* --- Mobile Responsiveness FOR FORM & PREVIEW --- */
         @media (max-width: 768px) {
             body { padding: 20px 10px; font-size: 14px; } .main-container { padding: 20px; }
             h1 { font-size: 1.8em; margin-bottom: 1.2em; } h2 { font-size: 1.3em; } h3 { font-size: 1.15em; }
@@ -130,6 +39,10 @@
             .line-item input { width: 100% !important; } .remove-item-btn { width: auto; margin-top: 5px; grid-row: 4; justify-self: end; }
             .form-buttons { flex-direction: column; gap: 10px; } .form-buttons button { width: 100%; margin: 0; }
             #invoice-preview-section { padding: 15px; } #invoice-preview-section h2 { font-size: 1.3em; margin-bottom: 15px;}
+             /* Ensure invoice scroll container takes full width */
+            #invoice-preview-container { width: 100%; }
+             /* Adjust invoice box width slightly for smaller screens if needed, but fixed is better for PDF */
+             /* .invoice-box { width: 95%; } */
         }
         @media (max-width: 480px) { body { font-size: 13px; } }
 
@@ -140,7 +53,7 @@
 
         <h1>Modern Invoice Generator</h1>
 
-        <h2>Yara Escape Tours & Trek</h2>
+      
         <form id="invoice-form">
          
              <div class="form-section"><h3><i class="fas fa-user-tie"></i> Client & Invoice Details</h3><div class="form-grid"> <div class="form-group"> <label for="guest-name">Guest/Client Name:</label> <input type="text" id="guest-name" value="MR. GUEST NAME" required> </div> <div class="form-group"> <label for="group-name">Group/Company Name:</label> <input type="text" id="group-name" value="Arunachal Group" required> </div> <div class="form-group"> <label for="guest-email">Guest Email:</label> <input type="email" id="guest-email" placeholder="client@email.com"> </div> <div class="form-group"> <label for="guest-phone">Guest Phone:</label> <input type="tel" id="guest-phone" placeholder="+91 XXXXX XXXXX"> </div> <div class="form-group"> <label for="invoice-number">Invoice Number:</label> <input type="text" id="invoice-number" value="#YARA/42825" required> </div> <div class="form-group"> <label for="invoice-date">Invoice Date:</label> <input type="date" id="invoice-date" required> </div> <div class="form-group"> <label for="due-date">Due Date:</label> <input type="text" id="due-date-input" value="Immediate"> </div> </div> </div>
@@ -149,7 +62,7 @@
 
             <div class="form-buttons">
                 <button type="submit" id="generate-preview-btn"><i class="fas fa-eye"></i> Generate Invoice Preview</button>
-                <button id="preview-pdf-btn" type="button" disabled><i class="fas fa-file-pdf"></i> Preview PDF in New Tab</button>
+                 <button id="preview-pdf-btn" type="button" disabled><i class="fas fa-file-pdf"></i> Preview PDF in New Tab</button>
             </div>
         </form>
 
@@ -158,22 +71,36 @@
             <h2>Invoice Preview</h2>
              <div id="invoice-preview-container"> 
                 <div class="invoice-box" id="invoice-to-print">
-                
+               
                     <div class="top-bar"> INVOICE NO: <span id="invoice-no-top">#YARA/XXXX</span> | INVOICE DATE: <span id="invoice-date-top">DD.MM.YY</span> </div>
-                    <header class="header"> <div class="company-info"> <img src="https://i.ibb.co/k6gRts42/Untitled-design-3.png" alt="Yara Escape Logo" class="logo-img"> <h2>Yara Escape Tours & Trek</h2> <p>Specialist in: Sikkim, Darjelling, Northeast</p> </div> <div class="invoice-details"> <h1>INVOICE</h1> <p><strong>Invoice No:</strong> <span id="invoice-no-main">#YARA/XXXX</span></p> <p><strong>Due Date:</strong> <span id="invoice-due-date" class="text-bold">Immediate</span></p> <p><strong>Invoice Date:</strong> <span id="invoice-date-main" class="text-bold">DD MMMM, YYYY</span></p> </div> </header>
-                    <section class="billing-info"> <div class="invoice-to"> <h3>INVOICE TO:</h3> <p><strong id="invoice-guest-prefix">Guest Name</strong></p> <p class="guest-name" id="invoice-group-name">Group Name</p> <p class="contact-info" id="invoice-guest-email"></p> <p class="contact-info" id="invoice-guest-phone"></p> </div>
-                    <div class="payment-column">
-                         <div class="pay-here-section"> 
-                             <p class="upi-details">UPI ID - (Scan QR or Use Bank Details)</p>
-                         
-                             <div class="pay-here-label-top">PAY HERE</div>
-                             <img src="https://i.ibb.co/mrR2YTQd/1a7debf0-dfe8-40e9-83e1-e0f0d6f159a6.jpg" alt="UPI QR Code" class="qr-code-img">
-                         </div>
-                    </div> </section>
+                    <header class="header">
+                        <div class="company-info">
+                       
+                            <img src="images/logo.png" alt="Yara Escape Logo" class="logo-img">
+                            <h2>Yara Escape Tours & Trek</h2>
+                            <p>Specialist in: Sikkim, Darjelling, Northeast</p>
+                        </div>
+                        <div class="invoice-details"> <h1>INVOICE</h1> <p><strong>Invoice No:</strong> <span id="invoice-no-main">#YARA/XXXX</span></p> <p><strong>Due Date:</strong> <span id="invoice-due-date" class="text-bold">Immediate</span></p> <p><strong>Invoice Date:</strong> <span id="invoice-date-main" class="text-bold">DD MMMM, YYYY</span></p> </div>
+                    </header>
+                    <section class="billing-info">
+                        <div class="invoice-to"> <h3>INVOICE TO:</h3> <p><strong id="invoice-guest-prefix">Guest Name</strong></p> <p class="guest-name" id="invoice-group-name">Group Name</p> <p class="contact-info" id="invoice-guest-email"></p> <p class="contact-info" id="invoice-guest-phone"></p> </div>
+                        <div class="payment-column">
+                            <div class="pay-here-section"> 
+                                <p class="upi-details">UPI ID - (Scan QR or Use Bank Details)</p>
+                          
+                                <div class="pay-here-label-top">PAY HERE</div>
+                           
+                                <img src="images/qr-code.png" alt="UPI QR Code" class="qr-code-img">
+                            </div>
+                        </div>
+                    </section>
                     <table class="items-table"> <thead> <tr> <th class="description">DESCRIPTION</th> <th class="align-right price">PRICE</th> <th class="qty">QTY</th> <th class="align-right subtotal">SUBTOTAL</th> </tr> </thead> <tbody id="invoice-items-body"></tbody> </table>
                     <table class="items-table" style="margin-top: 10px;"> <tbody> <tr class="divider" style="display: block; height: 1.5px; background-color: #d0d0d0; margin-top: 5px;"><td colspan="4"></td></tr> <tr> <td class="description" colspan="2" style="border-bottom: none;"> <strong>Bank Details for Payment</strong> <p><span class="bank-label">Account Name:</span> (Specify Account Holder Name)</p> <p><span class="bank-label">Account Number:</span> 120033745630</p> <p><span class="bank-label">Bank Name:</span> Canara Bank</p> <p><span class="bank-label">Branch:</span> Gangtok, Sikkim</p> <p><span class="bank-label">IFSC Code:</span> CNRB0003731</p> </td> <td class="qty" style="border-bottom: none;"></td> <td class="align-right subtotal" style="border-bottom: none;"></td> </tr> </tbody> </table>
                     <section class="summary-section"> <div class="terms-conditions"> <h4>TERMS AND CONDITIONS</h4> <p>Thank you for the advance payment. Kindly settle the balance amount by the due date specified (or as per prior agreement).</p> <p class="refund-policy"><i class="fas fa-check-circle"></i>100% REFUND ON CANCELLATION (T&C Apply - See detailed policy)</p> </div> <div class="totals-table-area"> <table id="invoice-totals-table"> <tbody> <tr> <td>Sub-total :</td> <td id="invoice-subtotal">0.00</td> </tr> <tr class="discount"> <td>Discount :</td> <td id="invoice-discount">- 0.00</td> </tr> <tr class="tax"> <td>Tax (<span id="invoice-tax-rate">0</span>%) :</td> <td id="invoice-tax-amount">+ 0.00</td> </tr> <tr> <td>Advance (Received) :</td> <td id="invoice-advance">0.00</td> </tr> </tbody> </table> <div class="total-due-wrapper"> <table style="width: 100%;"> <tbody> <tr class="total-due"> <td>Total Due :</td> <td id="invoice-total-due">0.00</td> </tr> </tbody> </table> </div> </div> </section>
-                    <footer class="footer"> <p class="thank-you">THANK YOU FOR CHOOSING US!</p> <div class="footer-columns"> <div class="footer-contact"> <p><i class="fas fa-phone-alt"></i>+91 8250133947 / +91 9883023091</p> <p><i class="fas fa-globe"></i><a href="http://www.yaraservice.com" target="_blank">www.yaraservice.com</a></p> <p><i class="fas fa-map-marker-alt"></i><strong>Gangtok, Lumsey Sikkim</strong></p> </div> <div class="signature-area"> <img src="https://i.ibb.co/yc66CR1R/Whats-App-Image-2025-04-25-at-13-34-44.jpg" alt="Signature" class="signature-img"> <p>Yara Escape Tours & Trek</p> </div> </div> <div class="final-invoice-info"> INVOICE NO: <span id="invoice-no-bottom">#YARA/XXXX</span> | INVOICE DATE: <span id="invoice-date-bottom">DD.MM.YY</span> </div> </footer>
+                    <footer class="footer"> <p class="thank-you">THANK YOU FOR CHOOSING US!</p> <div class="footer-columns"> <div class="footer-contact"> <p><i class="fas fa-phone-alt"></i>+91 8250133947 / +91 9883023091</p> <p><i class="fas fa-globe"></i><a href="http://www.yaraservice.com" target="_blank">www.yaraservice.com</a></p> <p><i class="fas fa-map-marker-alt"></i><strong>Gangtok, Lumsey Sikkim</strong></p> </div> <div class="signature-area">
+                    
+                         <img src="images/signature.png" alt="Signature" class="signature-img">
+                         <p>Yara Escape Tours & Trek</p> </div> </div> <div class="final-invoice-info"> INVOICE NO: <span id="invoice-no-bottom">#YARA/XXXX</span> | INVOICE DATE: <span id="invoice-date-bottom">DD.MM.YY</span> </div> </footer>
                  </div> 
              </div> 
         </div> 
@@ -194,48 +121,57 @@
         function addItem() { const newItemRow = document.createElement('div'); newItemRow.classList.add('line-item'); newItemRow.innerHTML = ` <input type="text" placeholder="Description" class="item-desc" required> <input type="number" placeholder="Qty" class="item-qty" value="1" min="1" step="1" required> <input type="number" placeholder="Unit Price (₹)" class="item-price" value="0" min="0" step="0.01" required> <button type="button" class="remove-item-btn" onclick="removeItem(this)" title="Remove Item"><i class="fas fa-trash-alt"></i></button> `; lineItemsContainer.appendChild(newItemRow); }
         function removeItem(button) { const itemRow = button.closest('.line-item'); if (lineItemsContainer.querySelectorAll('.line-item').length > 1) { itemRow.remove(); } else { alert("You must have at least one line item."); } }
 
-        // --- Form Submit Handler (Generate Preview - Unchanged) ---
+        // --- Form Submit Handler (Generate Preview - Unchanged from previous correct version) ---
         const form = document.getElementById('invoice-form');
         const previewSection = document.getElementById('invoice-preview-section');
         const pdfButton = document.getElementById('preview-pdf-btn');
         form.addEventListener('submit', function generatePreview(event) {
-             event.preventDefault();
-            console.log("Generating preview...");
-            const guestName = document.getElementById('guest-name').value; const groupName = document.getElementById('group-name').value; const guestEmail = document.getElementById('guest-email').value; const guestPhone = document.getElementById('guest-phone').value; const invoiceNumber = document.getElementById('invoice-number').value; const invoiceDate = document.getElementById('invoice-date').value; const dueDate = document.getElementById('due-date-input').value; const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0; const discount = parseFloat(document.getElementById('discount').value) || 0; const advance = parseFloat(document.getElementById('advance').value) || 0;
-            document.getElementById('invoice-no-top').textContent = invoiceNumber; document.getElementById('invoice-date-top').textContent = formatDateShort(invoiceDate); document.getElementById('invoice-no-main').textContent = invoiceNumber; document.getElementById('invoice-due-date').textContent = dueDate; document.getElementById('invoice-date-main').textContent = formatDateLong(invoiceDate); document.getElementById('invoice-no-bottom').textContent = invoiceNumber; document.getElementById('invoice-date-bottom').textContent = formatDateShort(invoiceDate); document.getElementById('invoice-guest-prefix').textContent = guestName; document.getElementById('invoice-group-name').textContent = groupName; document.getElementById('invoice-guest-email').textContent = guestEmail || ''; document.getElementById('invoice-guest-phone').textContent = guestPhone || '';
-            const invoiceItemsBody = document.getElementById('invoice-items-body'); invoiceItemsBody.innerHTML = ''; let currentSubtotal = 0;
-            const itemRows = lineItemsContainer.querySelectorAll('.line-item');
-            itemRows.forEach(row => { const descInput = row.querySelector('.item-desc'); const qtyInput = row.querySelector('.item-qty'); const priceInput = row.querySelector('.item-price'); const desc = descInput ? descInput.value : 'N/A'; const qty = parseInt(qtyInput ? qtyInput.value : '1') || 1; const price = parseFloat(priceInput ? priceInput.value : '0') || 0; const itemSubtotal = qty * price; currentSubtotal += itemSubtotal; const tr = document.createElement('tr'); tr.innerHTML = ` <td class="description">${desc}</td> <td class="align-right price">${formatCurrency(price)}</td> <td class="qty">${qty}</td> <td class="align-right subtotal">${formatCurrency(itemSubtotal)}</td> `; invoiceItemsBody.appendChild(tr); });
-            const taxAmount = (currentSubtotal * taxRate) / 100; const totalDue = currentSubtotal + taxAmount - discount - advance;
-            document.getElementById('invoice-subtotal').textContent = formatCurrency(currentSubtotal); document.getElementById('invoice-discount').textContent = `- ${formatCurrency(discount)}`; document.getElementById('invoice-tax-rate').textContent = taxRate; document.getElementById('invoice-tax-amount').textContent = `+ ${formatCurrency(taxAmount)}`; document.getElementById('invoice-advance').textContent = formatCurrency(advance); document.getElementById('invoice-total-due').textContent = formatCurrency(totalDue);
-            previewSection.classList.remove('hidden'); pdfButton.disabled = false;
-            previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+             event.preventDefault(); console.log("Generating preview...");
+             const guestName = document.getElementById('guest-name').value; const groupName = document.getElementById('group-name').value; const guestEmail = document.getElementById('guest-email').value; const guestPhone = document.getElementById('guest-phone').value; const invoiceNumber = document.getElementById('invoice-number').value; const invoiceDate = document.getElementById('invoice-date').value; const dueDate = document.getElementById('due-date-input').value; const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0; const discount = parseFloat(document.getElementById('discount').value) || 0; const advance = parseFloat(document.getElementById('advance').value) || 0;
+             document.getElementById('invoice-no-top').textContent = invoiceNumber; document.getElementById('invoice-date-top').textContent = formatDateShort(invoiceDate); document.getElementById('invoice-no-main').textContent = invoiceNumber; document.getElementById('invoice-due-date').textContent = dueDate; document.getElementById('invoice-date-main').textContent = formatDateLong(invoiceDate); document.getElementById('invoice-no-bottom').textContent = invoiceNumber; document.getElementById('invoice-date-bottom').textContent = formatDateShort(invoiceDate); document.getElementById('invoice-guest-prefix').textContent = guestName; document.getElementById('invoice-group-name').textContent = groupName; document.getElementById('invoice-guest-email').textContent = guestEmail || ''; document.getElementById('invoice-guest-phone').textContent = guestPhone || '';
+             const invoiceItemsBody = document.getElementById('invoice-items-body'); invoiceItemsBody.innerHTML = ''; let currentSubtotal = 0;
+             const itemRows = lineItemsContainer.querySelectorAll('.line-item');
+             itemRows.forEach(row => { const descInput = row.querySelector('.item-desc'); const qtyInput = row.querySelector('.item-qty'); const priceInput = row.querySelector('.item-price'); const desc = descInput ? descInput.value : 'N/A'; const qty = parseInt(qtyInput ? qtyInput.value : '1') || 1; const price = parseFloat(priceInput ? priceInput.value : '0') || 0; const itemSubtotal = qty * price; currentSubtotal += itemSubtotal; const tr = document.createElement('tr'); tr.innerHTML = ` <td class="description">${desc}</td> <td class="align-right price">${formatCurrency(price)}</td> <td class="qty">${qty}</td> <td class="align-right subtotal">${formatCurrency(itemSubtotal)}</td> `; invoiceItemsBody.appendChild(tr); });
+             const taxAmount = (currentSubtotal * taxRate) / 100; const totalDue = currentSubtotal + taxAmount - discount - advance;
+             document.getElementById('invoice-subtotal').textContent = formatCurrency(currentSubtotal); document.getElementById('invoice-discount').textContent = `- ${formatCurrency(discount)}`; document.getElementById('invoice-tax-rate').textContent = taxRate; document.getElementById('invoice-tax-amount').textContent = `+ ${formatCurrency(taxAmount)}`; document.getElementById('invoice-advance').textContent = formatCurrency(advance); document.getElementById('invoice-total-due').textContent = formatCurrency(totalDue);
+             previewSection.classList.remove('hidden'); pdfButton.disabled = false;
+             previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
-        // --- PDF Preview Logic (Reverted to capture visible element) ---
+        // --- PDF Preview Logic (Using previously successful method for visible element) ---
         const invoiceElement = document.getElementById('invoice-to-print');
         pdfButton.addEventListener('click', function previewPDF() {
             const originalButtonText = pdfButton.innerHTML;
             pdfButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
             pdfButton.disabled = true;
 
+            // IMPORTANT: Ensure the element is actually visible and rendered before capture
+            if (previewSection.classList.contains('hidden') || !invoiceElement) {
+                alert("Please generate the invoice preview first.");
+                pdfButton.innerHTML = originalButtonText; pdfButton.disabled = false;
+                return;
+            }
+
             html2canvas(invoiceElement, { // Capture the VISIBLE #invoice-to-print element
-                 scale: 3, // High scale for quality
-                 useCORS: true, // For external images
+                 scale: 3, // High scale often helps quality
+                 useCORS: true, // Needed for images even if local sometimes
                  logging: true,
-                 allowTaint: true, // Might help with CORS issues
-                 backgroundColor: '#ffffff' // Ensure white background
-                 // REMOVED scrollX/Y, windowWidth/Height options - let it capture the element's natural size
+                 allowTaint: true, // Fallback
+                 backgroundColor: '#ffffff' // Explicit background
+                 // Keep options minimal for reliability
             }).then(canvas => {
                 console.log("Canvas generated for PDF");
                 const imgData = canvas.toDataURL('image/png', 1.0); // High quality PNG
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-                const pdfWidth = pdf.internal.pageSize.getWidth(); const pdfHeight = pdf.internal.pageSize.getHeight();
-                const canvasWidth = canvas.width; const canvasHeight = canvas.height;
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
                 const canvasRatio = canvasWidth / canvasHeight;
-                const margin = 7; // Use margin that worked before
-                const effectivePdfWidth = pdfWidth - 2 * margin; const effectivePdfHeight = pdfHeight - 2 * margin;
+                const margin = 7; // Use margin that worked reliably
+                const effectivePdfWidth = pdfWidth - 2 * margin;
+                const effectivePdfHeight = pdfHeight - 2 * margin;
                 let finalWidth, finalHeight;
                 if (canvasRatio > (effectivePdfWidth / effectivePdfHeight)) { finalWidth = effectivePdfWidth; finalHeight = finalWidth / canvasRatio; }
                 else { finalHeight = effectivePdfHeight; finalWidth = finalHeight * canvasRatio; }
@@ -245,12 +181,12 @@
                 pdf.addImage(imgData, 'PNG', marginLeft, marginTop, finalWidth, finalHeight, undefined, 'FAST');
                 pdf.output('dataurlnewwindow'); // Open in New Tab
                 console.log("PDF opened in new tab");
-                pdfButton.innerHTML = originalButtonText; pdfButton.disabled = false; // Re-enable button
+                pdfButton.innerHTML = originalButtonText; pdfButton.disabled = false;
 
             }).catch(error => {
                  console.error("Error generating canvas for PDF:", error);
                  alert("Error generating PDF. Could not capture invoice content. Check console for details.");
-                 pdfButton.innerHTML = originalButtonText; pdfButton.disabled = false; // Re-enable on error
+                 pdfButton.innerHTML = originalButtonText; pdfButton.disabled = false;
             });
         });
     </script>
